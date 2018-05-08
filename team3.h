@@ -13,53 +13,60 @@ public:
     Team3();
 };
 
-static void split_str(const std::string& a, int &first, int &second )
+//Scalar product must be 0
+std::string orthogonality(std::string arg)
 {
-    size_t found=a.find(' ');
-    if (found==std::string::npos)
-        return;
-    std::vector<int> arr;
-    first= stoi (a.substr(0, found));
-    second= stoi (a.substr(found));
-}
+    std::vector<std::vector<int>> matrix;
+    std::vector<int> temp;
 
-std::string orthogonality(std::string& arg)
-{
-    std::pair<int, int> a;
-    std::pair<int, int> b;
-
-    int sum1=1;
-    int sum2=1;
-
-    bool flag = false;
-    for(int i=0;i<arg.length();++i)
+    int jumper=0;
+    std::string temp_s;
+    for(int i=0;i<arg.length();)
     {
+        temp_s="";
         int a=0;
-        if (arg[i] <= '9' && arg[i] >= '0')
+        if(arg[i]>='0' && arg[i]<='9')
         {
             if(arg[i-1]=='-')
             {
-                a=(arg[i]-'0')*(-1);
-            }
-            else
-            {
-                a=(arg[i]-'0');
+                temp_s+=arg[i-1];
             }
 
-            if(flag==false)
+            while(arg[i]>='0' && arg[i]<='9')
             {
-                sum1*=a;
-                flag=true;
+                temp_s+=arg[i];
+                i++;
+            }
+
+            a=stoi(temp_s);
+
+            if(jumper<2)
+            {
+                temp.push_back(a);
+                jumper++;
             }
             else
             {
-                flag=false;
-                sum2*=a;
+                matrix.push_back(temp);
+                temp.erase(temp.begin(),temp.end());
+                temp.shrink_to_fit();
+                temp.push_back(a);
+                jumper=1;
             }
+        }
+
+        else
+        {
+            if(i==arg.length()-1)
+            {
+                matrix.push_back(temp);
+            }
+            i++;
         }
     }
 
-    if((sum1+sum2)==0)
+    int produce = (matrix[0][0]*matrix[1][0]) + (matrix[0][1]*matrix[1][1]);
+    if(produce==0)
     {
         return "1";
     }
@@ -69,6 +76,70 @@ std::string orthogonality(std::string& arg)
     }
 }
 
+
+//Mixed product must be 0
+std::string complanation(std::string arg)
+{
+    std::vector<std::vector<int>> matrix;
+    std::vector<int> temp;
+
+    std::string temp_s;
+    int jumper=0;
+    for(int i=0;i<arg.length();)
+    {
+        temp_s="";
+        int a=0;
+        if(arg[i]>='0' && arg[i]<='9')
+        {
+            if(arg[i-1]=='-')
+            {
+                temp_s+=arg[i-1];
+            }
+
+            while(arg[i]>='0' && arg[i]<='9')
+            {
+                temp_s+=arg[i];
+                i++;
+            }
+
+            a = stoi(temp_s);
+
+            if(jumper<3)
+            {
+                temp.push_back(a);
+                jumper++;
+            }
+            else
+            {
+                matrix.push_back(temp);
+                temp.erase(temp.begin(),temp.end());
+                temp.shrink_to_fit();
+                temp.push_back(a);
+                jumper=1;
+            }
+        }
+        else
+        {
+            if(i==arg.length()-1)
+            {
+                matrix.push_back(temp);
+            }
+            i++;
+        }
+    }
+
+    int determ = (matrix[0][0]*matrix[1][1]*matrix[2][2]) + (matrix[0][1]*matrix[1][2]*matrix[2][0]) + (matrix[1][0]*matrix[0][2]*matrix[2][1])
+            - (matrix[2][0]*matrix[1][1]*matrix[0][2]) - (matrix[0][1]*matrix[1][0]*matrix[2][2]) - (matrix[0][0]*matrix[1][2]*matrix[2][1]);
+
+    if(determ==0)
+    {
+        return "1";
+    }
+    else
+    {
+        return "0";
+    }
+}
 
 extern "C"  std::string process(std::string id, std::string arg)
 {
@@ -100,7 +171,7 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=121 && _id<=140)
     {
-        return "";
+        return complanation(arg);
     }
     else if(_id>=141 && _id<=160)
     {
