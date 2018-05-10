@@ -2,8 +2,9 @@
 #define TEAM3_H
 
 #include "team3_global.h"
-#include <unistd.h>
-#include <QString>
+#include <iostream>
+#include <cmath>
+#include<sstream>
 #include <vector>
 
 class TEAM3SHARED_EXPORT Team3
@@ -13,8 +14,62 @@ public:
     Team3();
 };
 
-//Scalar product must be 0
-std::string orthogonality(std::string arg)
+//PARSERS
+
+std::vector<std::vector<int>> Parse_to_3x3(std::string arg)
+{
+    std::vector<std::vector<int>> matrix;
+    std::vector<int> temp;
+
+    std::string temp_s;
+    int jumper=0;
+    for(int i=0;i<arg.length();)
+    {
+        temp_s="";
+        int a=0;
+        if(arg[i]>='0' && arg[i]<='9')
+        {
+            if(arg[i-1]=='-')
+            {
+                temp_s+=arg[i-1];
+            }
+
+            while(arg[i]>='0' && arg[i]<='9')
+            {
+                temp_s+=arg[i];
+                i++;
+            }
+
+            a = stoi(temp_s);
+
+            if(jumper<3)
+            {
+                temp.push_back(a);
+                jumper++;
+            }
+            else
+            {
+                matrix.push_back(temp);
+                temp.erase(temp.begin(),temp.end());
+                temp.shrink_to_fit();
+                temp.push_back(a);
+                jumper=1;
+            }
+        }
+        else
+        {
+            if(i==arg.length()-1)
+            {
+                matrix.push_back(temp);
+            }
+            i++;
+        }
+    }
+ return matrix;
+}
+
+
+std::vector<std::vector<int>> Parse_to_2x2(std::string arg)
 {
     std::vector<std::vector<int>> matrix;
     std::vector<int> temp;
@@ -64,6 +119,15 @@ std::string orthogonality(std::string arg)
             i++;
         }
     }
+    return matrix;
+}
+
+
+
+//Scalar product must be 0
+std::string orthogonality(std::string arg)
+{
+    std::vector<std::vector<int>> matrix=Parse_to_2x2(arg);
 
     int produce = (matrix[0][0]*matrix[1][0]) + (matrix[0][1]*matrix[1][1]);
     if(produce==0)
@@ -76,57 +140,23 @@ std::string orthogonality(std::string arg)
     }
 }
 
+std::string square_of_parellelegramm(std::string arg)
+{
+    std::vector<std::vector<int>> matrix = Parse_to_3x3(arg);
+
+
+    int produce = (matrix[0][0]*matrix[1][0]) + (matrix[0][1]*matrix[1][1]);
+    int len_a = sqrt(pow(matrix[0][0],2)+pow(matrix[0][1],2));
+    int len_b = sqrt(pow(matrix[0][0],2)+pow(matrix[0][1],2));
+    double temp = produce/(len_a*len_b);
+    return std::to_string(static_cast<int>(len_a*len_b*sin(acos(temp))));
+}
 
 //Mixed product must be 0
 std::string complanation(std::string arg)
 {
-    std::vector<std::vector<int>> matrix;
-    std::vector<int> temp;
+    std::vector<std::vector<int>> matrix = Parse_to_3x3(arg);
 
-    std::string temp_s;
-    int jumper=0;
-    for(int i=0;i<arg.length();)
-    {
-        temp_s="";
-        int a=0;
-        if(arg[i]>='0' && arg[i]<='9')
-        {
-            if(arg[i-1]=='-')
-            {
-                temp_s+=arg[i-1];
-            }
-
-            while(arg[i]>='0' && arg[i]<='9')
-            {
-                temp_s+=arg[i];
-                i++;
-            }
-
-            a = stoi(temp_s);
-
-            if(jumper<3)
-            {
-                temp.push_back(a);
-                jumper++;
-            }
-            else
-            {
-                matrix.push_back(temp);
-                temp.erase(temp.begin(),temp.end());
-                temp.shrink_to_fit();
-                temp.push_back(a);
-                jumper=1;
-            }
-        }
-        else
-        {
-            if(i==arg.length()-1)
-            {
-                matrix.push_back(temp);
-            }
-            i++;
-        }
-    }
 
     int determ = (matrix[0][0]*matrix[1][1]*matrix[2][2]) + (matrix[0][1]*matrix[1][2]*matrix[2][0]) + (matrix[1][0]*matrix[0][2]*matrix[2][1])
             - (matrix[2][0]*matrix[1][1]*matrix[0][2]) - (matrix[0][1]*matrix[1][0]*matrix[2][2]) - (matrix[0][0]*matrix[1][2]*matrix[2][1]);
@@ -139,6 +169,17 @@ std::string complanation(std::string arg)
     {
         return "0";
     }
+}
+
+std::string volume_of_parallelepiped(std::string arg)
+{
+    std::vector<std::vector<int>> matrix = Parse_to_3x3(arg);
+
+
+    int determ = (matrix[0][0]*matrix[1][1]*matrix[2][2]) + (matrix[0][1]*matrix[1][2]*matrix[2][0]) + (matrix[1][0]*matrix[0][2]*matrix[2][1])
+            - (matrix[2][0]*matrix[1][1]*matrix[0][2]) - (matrix[0][1]*matrix[1][0]*matrix[2][2]) - (matrix[0][0]*matrix[1][2]*matrix[2][1]);
+
+    return std::to_string(abs(determ));
 }
 
 extern "C"  std::string process(std::string id, std::string arg)
@@ -175,11 +216,11 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=141 && _id<=160)
     {
-        return "";
+        return volume_of_parallelepiped(arg);
     }
     else if(_id>=161 && _id<=180)
     {
-        return "";
+        return square_of_parellelegramm(arg);
     }
     else if(_id>=181 && _id<=200)
     {
