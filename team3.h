@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include<sstream>
+#include <algorithm>
 #include <vector>
 
 class TEAM3SHARED_EXPORT Team3
@@ -182,6 +183,19 @@ std::string volume_of_parallelepiped(std::string arg)
     return std::to_string(abs(determ));
 }
 
+std::string addition_to_plural(std::string arg)
+{
+    std::string full="0123456789ABCDEF";
+
+    for(int i=0;i<arg.size();++i)
+    {
+        full.erase(std::remove(full.begin(),full.end(),arg[i]),full.end());
+    }
+
+    return full;
+}
+
+
 extern "C"  std::string process(std::string id, std::string arg)
 {
     int _id=stoi(id);
@@ -232,7 +246,7 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=221 && _id<=240)
     {
-        return "";
+        return addition_to_plural(arg);
     }
     else if(_id>=241 && _id<=260)
     {
