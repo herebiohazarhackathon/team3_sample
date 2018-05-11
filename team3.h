@@ -274,6 +274,43 @@ std::string operations_wth_plurals(std::string arg)
     return std::to_string(Union.size())+","+std::to_string(Section.size())+","+std::to_string(A.size())+","+std::to_string(B.size());
 }
 
+//TO POLAR. LOOK AT THE CUTTING!!!!!!!!
+std::string to_polar(std::string arg)
+{
+    std::vector<double> Point;
+    #define PI 3.14159265
+
+    //PARSE
+    for(int i=0;i<arg.length();++i)
+    {
+        std::string temp_s="";
+        int a=0;
+        if(arg[i]>='0' && arg[i]<='9')
+        {
+            if(arg[i-1]=='-')
+            {
+                temp_s+=arg[i-1];
+            }
+
+            while(arg[i]>='0' && arg[i]<='9')
+            {
+                temp_s+=arg[i];
+                i++;
+            }
+
+            a = stoi(temp_s);
+
+            Point.push_back(a);
+        }
+    }
+
+    std::stringstream stream, stream1;
+    stream << std::fixed << std::setprecision(2) << sqrt(pow(Point[0],2)+pow(Point[1],2));
+    stream1 << std::fixed << std::setprecision(2) << atan(Point[1]/Point[0])*180/PI;
+    std::string temp = stream.str();
+    temp+=","+stream1.str();
+    return temp;
+}
 
 extern "C"  std::string process(std::string id, std::string arg)
 {
@@ -333,7 +370,7 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=261 && _id<=280)
     {
-        return "";
+        return to_polar(arg);
     }
     else if(_id>=281 && _id<=300)
     {
