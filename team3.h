@@ -4,10 +4,10 @@
 #include "team3_global.h"
 #include <iostream>
 #include <cmath>
-#include<sstream>
+#include <sstream>
 #include <algorithm>
 #include <vector>
-
+#include <iomanip>
 class TEAM3SHARED_EXPORT Team3
 {
 
@@ -312,6 +312,20 @@ std::string to_polar(std::string arg)
     return temp;
 }
 
+std::string turn_point(std::string& arg)
+{
+    #define PI 3.14159265
+    arg+=",as100as";
+    std::vector<std::vector<int>> matrix=Parse_to_2x2(arg);
+
+    std::stringstream stream, stream1;
+    stream << std::fixed <<std::setprecision(2) << ( (matrix[0][0]*cos(matrix[1][0]*(PI/180))) - (matrix[0][1]*sin(matrix[1][0]*(PI/180))) );
+    stream1 << std::fixed <<std::setprecision(2) << ( (matrix[0][0]*sin(matrix[1][0]*(PI/180))) + (matrix[0][1]*cos(matrix[1][0]*(PI/180))) );
+    std::string temp = stream.str();
+    temp+=","+stream1.str();
+    return temp;
+}
+
 extern "C"  std::string process(std::string id, std::string arg)
 {
     int _id=stoi(id);
@@ -374,7 +388,7 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=281 && _id<=300)
     {
-        return "";
+        return turn_point(arg);
     }
     else if(_id>=301 && _id<=320)
     {
