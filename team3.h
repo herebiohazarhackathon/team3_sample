@@ -17,6 +17,33 @@ public:
 
 //PARSERS
 
+std::vector<int> Parse_to_line(std::string arg)
+{
+    std::vector<int> line;
+    std::string temp_s;
+    for(int i =0;i<arg.length();++i)
+    {
+        int a=0;
+        temp_s="";
+        if(arg[i]>='0' && arg[i]<='9')
+        {
+            if(arg[i-1]=='-')
+            {
+                temp_s+=arg[i-1];
+            }
+
+            while(arg[i]>='0' && arg[i]<='9')
+            {
+                temp_s+=arg[i];
+                i++;
+            }
+            a=stoi(temp_s);
+            line.push_back(a);
+        }
+    }
+    return line;
+}
+
 std::vector<std::vector<int>> Parse_to_3x3(std::string arg)
 {
     std::vector<std::vector<int>> matrix;
@@ -66,7 +93,7 @@ std::vector<std::vector<int>> Parse_to_3x3(std::string arg)
             i++;
         }
     }
- return matrix;
+    return matrix;
 }
 
 
@@ -121,6 +148,24 @@ std::vector<std::vector<int>> Parse_to_2x2(std::string arg)
         }
     }
     return matrix;
+}
+
+std::string exist_triangle(std::string arg)
+{
+    std::vector<int> line = Parse_to_line(arg);
+    if(line[0]>line[1]+line[2])
+    {
+        return "0";
+    }
+    else if(line[1]>line[0]+line[2])
+    {
+        return "0";
+    }
+    else if(line[2]>line[0]+line[1])
+    {
+        return "0";
+    }
+    return "1";
 }
 
 
@@ -348,7 +393,7 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=81 && _id<=100)
     {
-        return "";
+        return exist_triangle(arg);
     }
     else if(_id>=101 && _id<=120)
     {
