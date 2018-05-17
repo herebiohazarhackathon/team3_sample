@@ -248,6 +248,62 @@ std::vector<std::vector<int>> Parse_to_2x2(std::string arg)
 
 /*******************************************************************************************/
 
+std::string mini_game(std::string arg)
+{
+    int x=0;
+    int y=0;
+
+    for(int i=0;i<arg.length();++i)
+    {
+        if(arg[i]>='1' && arg[i]<='9')
+        {
+            x+=arg[i]-'0';
+            y+=arg[i]-'0';
+        }
+        else
+        {
+            switch(arg[i])
+            {
+            case 'R':
+                x++;
+                break;
+            case 'L':
+                x--;
+                break;
+            case 'U':
+                y++;
+            case 'D':
+                y--;
+            case 'X':
+                x=0;
+                break;
+            case 'Y':
+                y=0;
+                break;
+            case '*':
+                x*=2;
+                y*=2;
+                break;
+            case '/':
+                x/=2;
+                y/=2;
+                break;
+            case 'Q':
+                pow(x,2);
+                pow(y,2);
+                break;
+            case 'S':
+                x=0;
+                y=0;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    return std::to_string(x)+","+std::to_string(y);
+}
+
 std::string quadratic_equation(std::string arg)
 {
     double a,b,c, D, sD, x1, x2;
@@ -632,7 +688,7 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=1 && _id<=40)
     {
-        //METHOD OF RECTANGLES
+        //METHOD OF LEFT RECTANGLES
         return integral(arg, _id);
     }
     else if(_id>=41 && _id<=60)
@@ -641,7 +697,7 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=61 && _id<=80)
     {
-        return "";
+        return mini_game(arg);
     }
     else if(_id>=81 && _id<=100)
     {
@@ -697,6 +753,7 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=341 && _id<=360)
     {
+        //HAVEN'T DONE
         return triangle_orientation(arg);
     }
     else if(_id>=361 && _id<=380)
