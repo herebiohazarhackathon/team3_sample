@@ -25,23 +25,122 @@ std::vector<int> Parse_to_line(std::string arg)
     {
         int a=0;
         temp_s="";
-        if(arg[i]>='0' && arg[i]<='9')
+        while(arg[i]>='0' && arg[i]<='9')
         {
             if(arg[i-1]=='-')
             {
                 temp_s+=arg[i-1];
             }
-
-            while(arg[i]>='0' && arg[i]<='9')
-            {
-                temp_s+=arg[i];
-                i++;
-            }
+            temp_s+=arg[i];
+            i++;
+        }
+        if(!temp_s.empty())
+        {
             a=stoi(temp_s);
             line.push_back(a);
         }
     }
     return line;
+}
+
+std::vector<std::vector<int>> Parse_to_3x2(std::string arg)
+{
+    std::vector<std::vector<int>> matrix;
+    std::vector<int> temp;
+
+    int jumper=0;
+    for(int i=0; i<arg.length();)
+    {
+        std::string temp_s="";
+        int a=0;
+        while(arg[i]>='0' && arg[i]<='9')
+        {
+            if(arg[i-1]=='-')
+            {
+                temp_s+=arg[i-1];
+            }
+            temp_s+=arg[i];
+            i++;
+        }
+
+        if(!temp_s.empty())
+        {
+            a=stoi(temp_s);
+
+            if(jumper<1)
+            {
+                temp.push_back(a);
+                jumper++;
+            }
+            else
+            {
+                matrix.push_back(temp);
+                temp.erase(temp.begin(),temp.end());
+                temp.shrink_to_fit();
+                temp.push_back(a);
+                jumper=1;
+            }
+        }
+        else
+        {
+            if(i==arg.length()-1)
+            {
+                matrix.push_back(temp);
+            }
+            i++;
+        }
+    }
+    return matrix;
+}
+
+std::vector<std::vector<int>> Parse_to_2x4(std::string arg)
+{
+    std::vector<std::vector<int>> matrix;
+    std::vector<int> temp;
+
+    int jumper=0;
+    for(int i=0; i<arg.length();)
+    {
+        std::string temp_s="";
+        int a=0;
+        while(arg[i]>='0' && arg[i]<='9')
+        {
+            if(arg[i-1]=='-')
+            {
+                temp_s+=arg[i-1];
+            }
+            temp_s+=arg[i];
+            i++;
+        }
+
+        if(!temp_s.empty())
+        {
+            a=stoi(temp_s);
+
+            if(jumper<4)
+            {
+                temp.push_back(a);
+                jumper++;
+            }
+            else
+            {
+                matrix.push_back(temp);
+                temp.erase(temp.begin(),temp.end());
+                temp.shrink_to_fit();
+                temp.push_back(a);
+                jumper=1;
+            }
+        }
+        else
+        {
+            if(i==arg.length()-1)
+            {
+                matrix.push_back(temp);
+            }
+            i++;
+        }
+    }
+    return matrix;
 }
 
 std::vector<std::vector<int>> Parse_to_3x3(std::string arg)
@@ -55,19 +154,17 @@ std::vector<std::vector<int>> Parse_to_3x3(std::string arg)
     {
         temp_s="";
         int a=0;
-        if(arg[i]>='0' && arg[i]<='9')
+        while(arg[i]>='0' && arg[i]<='9')
         {
             if(arg[i-1]=='-')
             {
                 temp_s+=arg[i-1];
             }
-
-            while(arg[i]>='0' && arg[i]<='9')
-            {
-                temp_s+=arg[i];
-                i++;
-            }
-
+            temp_s+=arg[i];
+            i++;
+        }
+        if(!temp_s.empty())
+        {
             a = stoi(temp_s);
 
             if(jumper<3)
@@ -96,7 +193,6 @@ std::vector<std::vector<int>> Parse_to_3x3(std::string arg)
     return matrix;
 }
 
-
 std::vector<std::vector<int>> Parse_to_2x2(std::string arg)
 {
     std::vector<std::vector<int>> matrix;
@@ -108,19 +204,18 @@ std::vector<std::vector<int>> Parse_to_2x2(std::string arg)
     {
         temp_s="";
         int a=0;
-        if(arg[i]>='0' && arg[i]<='9')
+        while(arg[i]>='0' && arg[i]<='9')
         {
             if(arg[i-1]=='-')
             {
                 temp_s+=arg[i-1];
             }
+            temp_s+=arg[i];
+            i++;
+        }
 
-            while(arg[i]>='0' && arg[i]<='9')
-            {
-                temp_s+=arg[i];
-                i++;
-            }
-
+        if(!temp_s.empty())
+        {
             a=stoi(temp_s);
 
             if(jumper<2)
@@ -150,6 +245,163 @@ std::vector<std::vector<int>> Parse_to_2x2(std::string arg)
     return matrix;
 }
 
+
+/*******************************************************************************************/
+
+std::string quadratic_equation(std::string arg)
+{
+    double a,b,c, D, sD, x1, x2;
+    std::string temp;
+    std::vector<int> matrix = Parse_to_line(arg);
+
+    a = matrix[0];
+    b= matrix[1];
+    c= matrix[2];
+
+    D = pow(b,2)-4*a*c;
+    if(D>=0)
+    {
+        sD = sqrt(D);
+
+        x1 = (-b+sD)/(2*a);
+        x2 = (-b-sD)/(2*a);
+
+        std::stringstream stream, stream1;
+        stream << std::fixed << std::setprecision(2) << x1;
+        stream1 << std::fixed << std::setprecision(2) << x2;
+        if(x1<x2)
+        {
+            temp = stream.str()+","+stream1.str();
+        }
+        else
+        {
+            temp = stream1.str()+","+stream.str();
+        }
+    }
+    else
+    {
+        sD = sqrt(abs(D));
+
+        x1 = (-b)/(2*a);
+        x2 = (sD/2*a);
+
+        std::stringstream stream, stream1;
+        stream << std::fixed << std::setprecision(2) << x1;
+        stream1 << std::fixed << std::setprecision(2) << x2;
+
+        temp = stream.str()+","+stream1.str()+"i";
+    }
+    return temp;
+}
+
+std::string integral(std::string arg, int _id)
+{
+    int a,b;
+    double h, result;
+    std::vector<int> matrix = Parse_to_line(arg);
+    int n=2;
+    a = matrix[0];
+    b= matrix[1];
+    h = (b-a)/n;
+
+    if(_id<=5)
+    {
+        while(a<=b)
+        {
+            result+=pow(3,sin(a))*h;
+            a+=h;
+        }
+    }
+    else if(_id<=10)
+    {
+        while(a<=b)
+        {
+            result+=pow(2,cos(a))*h;
+            a+=h;
+        }
+    }
+    else if(_id<=15)
+    {
+        while(a<=b)
+        {
+            result+=(a+sin(pow(a,3)))*h;
+            a+=h;
+        }
+    }
+    else if(_id<=20)
+    {
+        while(a<=b)
+        {
+            result+=(a+cos(pow(a,2)))*h;
+            a+=h;
+        }
+    }
+    else if(_id<=25)
+    {
+        result+=log10(a+sin(a))*h;
+        a+=h;
+    }
+    else if(_id<=30)
+    {
+        result+=((a+sin(a))/log10(a))*h;
+        a+=h;
+    }
+    else if(_id<=35)
+    {
+        result+=((a+cos(a))/log10(a))*h;
+        a+=h;
+    }
+    else
+    {
+        result+=atan(exp(sin(a)))*h;
+        a+=h;
+    }
+    int temp= floor(result);
+    return std::to_string(temp);
+}
+
+//HAVEN'T DONE
+std::string triangle_orientation(std::string arg)
+{
+    std::vector<std::vector<int>> matrix = Parse_to_3x2(arg);
+    //if(matrix[0][1])
+    return " ";
+}
+
+std::string point_of_crossing(std::string arg)
+{
+    std::vector<std::vector<int>> matrix = Parse_to_2x4(arg);
+    int x1,y1,x2,y2,x3,y3,x4,y4,x,y;
+    x1=matrix[0][0];
+    y1=matrix[0][1];
+    x2=matrix[0][2];
+    y2=matrix[0][3];
+
+    x3=matrix[1][0];
+    y3=matrix[1][1];
+    x4=matrix[1][2];
+    y4=matrix[1][3];
+
+    int dx1 = x2 - x1;
+    int dy1 = y2 - y1;
+    int dx2 = x4 - x3;
+    int dy2 = y4 - y3;
+    x = dy1 * dx2 - dy2 * dx1;
+    if(!x || !dx2)
+    {
+        return "0";
+    }
+
+    y = x3 * y4 - y3 * x4;
+    x = ((x1 * y2 - y1 * x2) * dx2 - y * dx1) / x;
+    y = (dy2 * x - y) / dx2;
+    if(((x1 <= x && x2 >= x) || (x2 <= x && x1 >= x)) && ((x3 <= x && x4 >= x) || (x4 <= x && x3 >= x)))
+    {
+        return "1";
+    }
+    return "0";
+}
+
 std::string exist_triangle(std::string arg)
 {
     std::vector<int> line = Parse_to_line(arg);
@@ -167,8 +419,6 @@ std::string exist_triangle(std::string arg)
     }
     return "1";
 }
-
-
 
 //Scalar product must be 0
 std::string orthogonality(std::string arg)
@@ -189,7 +439,6 @@ std::string orthogonality(std::string arg)
 std::string square_of_parellelegramm(std::string arg)
 {
     std::vector<std::vector<int>> matrix = Parse_to_3x3(arg);
-
 
     int produce = (matrix[0][0]*matrix[1][0]) + (matrix[0][1]*matrix[1][1]);
     int len_a = sqrt(pow(matrix[0][0],2)+pow(matrix[0][1],2));
@@ -228,6 +477,7 @@ std::string volume_of_parallelepiped(std::string arg)
     return std::to_string(abs(determ));
 }
 
+
 std::string addition_to_plural(std::string arg)
 {
     std::string full="0123456789ABCDEF";
@@ -240,7 +490,8 @@ std::string addition_to_plural(std::string arg)
     return full;
 }
 
-//NEED TO OPTIMISATION!!!!!!!!!!
+//LOOK AT ME!!!!
+//NEED TO OPTIMIZATION!!!!!!!!!!
 std::string operations_wth_plurals(std::string arg)
 {
     std::string A, B, Section, Union, DiffA_B, DiffB_A;
@@ -319,11 +570,10 @@ std::string operations_wth_plurals(std::string arg)
     return std::to_string(Union.size())+","+std::to_string(Section.size())+","+std::to_string(A.size())+","+std::to_string(B.size());
 }
 
-//TO POLAR. LOOK AT THE CUTTING!!!!!!!!
 std::string to_polar(std::string arg)
 {
     std::vector<double> Point;
-    #define PI 3.14159265
+#define PI 3.14159265
 
     //PARSE
     for(int i=0;i<arg.length();++i)
@@ -359,7 +609,7 @@ std::string to_polar(std::string arg)
 
 std::string turn_point(std::string& arg)
 {
-    #define PI 3.14159265
+#define PI 3.14159265
     arg+=",as100as";
     std::vector<std::vector<int>> matrix=Parse_to_2x2(arg);
 
@@ -371,6 +621,7 @@ std::string turn_point(std::string& arg)
     return temp;
 }
 
+
 extern "C"  std::string process(std::string id, std::string arg)
 {
     int _id=stoi(id);
@@ -381,11 +632,12 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=1 && _id<=40)
     {
-        return "";
+        //METHOD OF RECTANGLES
+        return integral(arg, _id);
     }
     else if(_id>=41 && _id<=60)
     {
-        return "";
+        return quadratic_equation(arg);
     }
     else if(_id>=61 && _id<=80)
     {
@@ -425,7 +677,7 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=241 && _id<=260)
     {
-        return operations_wth_plurals(arg);;
+        return operations_wth_plurals(arg);
     }
     else if(_id>=261 && _id<=280)
     {
@@ -445,11 +697,11 @@ extern "C"  std::string process(std::string id, std::string arg)
     }
     else if(_id>=341 && _id<=360)
     {
-        return "";
+        return triangle_orientation(arg);
     }
     else if(_id>=361 && _id<=380)
     {
-        return "";
+        return point_of_crossing(arg);
     }
     else if(_id>=381 && _id<=400)
     {
