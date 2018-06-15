@@ -353,67 +353,87 @@ std::string quadratic_equation(std::string arg)
 std::string integral(std::string arg, int _id)
 {
     int a,b;
-    double h, result;
+    double h = 0, result = 0;
+    double temp = 0;
     std::vector<int> matrix = Parse_to_line(arg);
-    int n=2;
+    int n = 301;
     a = matrix[0];
     b= matrix[1];
-    h = (b-a)/n;
+    h = (b-a)*1.0/n;
 
     if(_id<=5)
     {
-        while(a<=b)
+        for(int i = 0; i < n-1; i++)
         {
-            result+=pow(3,sin(a))*h;
-            a+=h;
+            temp = a+i*h;
+            result += pow(3,sin(temp));
         }
     }
     else if(_id<=10)
     {
-        while(a<=b)
+        for(int i = 0; i < n-1; i++)
         {
-            result+=pow(2,cos(a))*h;
-            a+=h;
+            temp = a+i*h;
+            result += pow(2,cos(temp));
         }
+
     }
     else if(_id<=15)
     {
-        while(a<=b)
+
+        for(int i = 0; i < n-1; i++)
         {
-            result+=(a+sin(pow(a,3)))*h;
-            a+=h;
+            temp = a+i*h;
+            result += temp+sin(pow(temp,3));
         }
     }
     else if(_id<=20)
     {
-        while(a<=b)
+
+        for(int i = 0; i < n-1; i++)
         {
-            result+=(a+cos(pow(a,2)))*h;
-            a+=h;
+            temp = a+i*h;
+            result += (temp+cos(pow(temp,2)));
         }
+
     }
     else if(_id<=25)
     {
-        result+=log10(a+sin(a))*h;
-        a+=h;
+
+        for(int i = 0; i < n-1; i++)
+        {
+            temp = a+i*h;
+            result += log10(a+sin(temp));
+        }
+
     }
     else if(_id<=30)
     {
-        result+=((a+sin(a))/log10(a))*h;
-        a+=h;
+        for(int i = 0; i < n-1; i++)
+        {
+            temp = a+i*h;
+            result += ((temp+sin(temp))/log10(temp));
+        }
+
     }
     else if(_id<=35)
     {
-        result+=((a+cos(a))/log10(a))*h;
-        a+=h;
+        for(int i = 0; i < n-1; i++)
+        {
+            temp = a+i*h;
+            result += ((temp+cos(temp))/log10(temp));
+        }
     }
     else
     {
-        result+=atan(exp(sin(a)))*h;
-        a+=h;
+        for(int i = 0; i < n-1; i++)
+        {
+            temp = a+i*h;
+            result += atan(exp(sin(temp)));
+        }
     }
-    int temp= floor(result);
-    return std::to_string(temp);
+    int res= floor(result*h);
+    return std::to_string(res);
 }
 
 //HAVEN'T DONE
